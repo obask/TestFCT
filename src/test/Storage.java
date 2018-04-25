@@ -26,40 +26,39 @@ public class Storage implements Runnable{
 
     @Override
     public void run() {
-        try{
-            while(true){
+        while(!Thread.currentThread().isInterrupted()) {
+            try {
                 Facility tempFacility = queue.take();
-                if(currentCount+tempFacility.getPerformance() < capacity){
+                if (currentCount + tempFacility.getPerformance() < capacity) {
                     Thread.sleep(10);
-                    currentCount+=tempFacility.getPerformance();
-                    for(int i = 0; i < tempFacility.getPerformance(); i++){
+                    currentCount += tempFacility.getPerformance();
+                    for (int i = 0; i < tempFacility.getPerformance(); i++) {
                         productsSequence.add(tempFacility.getProduct());
                     }
-                    System.out.println("На склад поступило " + tempFacility.getPerformance() + " единиц "+tempFacility.getProduct().productName+" (всего " + currentCount + ")");
-                }
-                else{
-                    while(currentCount+tempFacility.getPerformance() > capacity){
-                        for(int i = 0; i < truckList.size(); i++){
-                            if(currentCount+tempFacility.getPerformance() > capacity){
-                                for(int j = 0; j < truckList.get(i).capacity; j++){
+                    System.out.println("На склад поступило " + tempFacility.getPerformance() + " единиц " + tempFacility.getProduct().productName + " (всего " + currentCount + ")");
+                } else {
+                    while (currentCount + tempFacility.getPerformance() > capacity) {
+                        for (int i = 0; i < truckList.size(); i++) {
+                            if (currentCount + tempFacility.getPerformance() > capacity) {
+                                for (int j = 0; j < truckList.get(i).capacity; j++) {
                                     currentCount--;
                                     truckList.get(i).loadProduct(productsSequence.get(productsSequence.size() - 1));
                                     //System.out.println(truckList.get(i).name + " отгружает " + productsSequence.get(productsSequence.size() - 1).productName+" (на складе осталось " + currentCount+")");
                                     productsSequence.remove(productsSequence.size() - 1);
                                 }
-                            }
-                            else break;
+                            } else break;
                         }
                     }
-                    currentCount+=tempFacility.getPerformance();
-                    for(int i = 0; i < tempFacility.getPerformance(); i++){
+                    currentCount += tempFacility.getPerformance();
+                    for (int i = 0; i < tempFacility.getPerformance(); i++) {
                         productsSequence.add(tempFacility.getProduct());
                     }
-                    System.out.println("На склад поступило " + tempFacility.getPerformance() + " единиц "+tempFacility.getProduct().productName+" (всего " + currentCount + ")");
+                    System.out.println("На склад поступило " + tempFacility.getPerformance() + " единиц " + tempFacility.getProduct().productName + " (всего " + currentCount + ")");
                 }
+
+            } catch (InterruptedException e) {
+                break;
             }
-        }catch(InterruptedException e) {
-            e.printStackTrace();
         }
     }
 }

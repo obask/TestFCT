@@ -71,6 +71,7 @@ public class Main {
                 for(int i = 0; i < storage.getTruckList().size(); i++){
                     storage.getTruckList().get(i).getProductsCount();
                 }
+                storageThread.interrupt();
                 break;
             }
         }
